@@ -11,7 +11,7 @@
     "posttest": "npm run lint",
     "prebuild": "rimraf dist && tsc -w",
     "build": "rimraf dist && tsc",
-    "start:dev": "nodemon dist/server.js"
+    "start:dev": "nodemon --exec ts-node -r tsconfig-paths/register src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +24,8 @@
     "@types/node": "^22.7.5",
     "cross-env": "^7.0.3",
     "gts": "^6.0.2",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.8.3"
   },
   "dependencies": {
