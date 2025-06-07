@@ -1,5 +1,6 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import configClass from "../../configs";
+import mongoose from "mongoose";
 
 export default class MongoClientClass {
   uri: string =""
@@ -20,6 +21,7 @@ export default class MongoClientClass {
   public async initializeMongoConnection() {
     try {
         let {mongo_uri} = this.configs.MongoConfigDetails
+        await mongoose.connect(mongo_uri);// connection fail so we need to use this to connect the database 
         this.client = new MongoClient(mongo_uri, {
         serverApi: {
           version: ServerApiVersion.v1,
