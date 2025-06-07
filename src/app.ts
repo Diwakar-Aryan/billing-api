@@ -2,6 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import {Routes} from './interfaces/routes.interface';
 import configClass from './configs';
+import logger from './logger';
 // import { errorMiddleware } from "./middlewares/error.middleware";
 class App {
   private readonly app: express.Application;
@@ -17,7 +18,7 @@ class App {
 
   public async listen() {
     this.app.listen(this.config.ServerInfo.PORT, () => {
-      console.log(`App listening on port ${this.config.ServerInfo.PORT}`);
+      logger.info(`App listening on port ${this.config.ServerInfo.PORT}`);
     });
   }
 
