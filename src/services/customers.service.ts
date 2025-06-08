@@ -1,52 +1,44 @@
-import { Customer } from '@/databases/mongo/models/customer.model';
-import { ICustomer } from '@/types/interfaces';
-import { CustomerStatus } from '@/types/enums';
+import { CustomersRepository } from "@/repositories/customers.repository";
+import { ICustomer } from "@/types/interfaces";
+import { CustomerStatus } from "@/types/enums";
+import { BaseService } from "./base/base.servce";
 
-export class CustomerService {
+const customersRepository = new CustomersRepository();
+
+export class CustomersService extends BaseService<ICustomer> {
+  constructor() {
+    super(customersRepository);
+  }
+
   public async createCustomer(customerData: Partial<ICustomer>): Promise<ICustomer> {
-    const existingCustomer = await Customer.findOne({
+    const existingCustomer = await this.repository.findOne({
       $or: [
         { email: customerData.email },
         ...(customerData.phone ? [{ phone: customerData.phone }] : [])
       ]
     });
+
     if (existingCustomer) {
-      const updatedCustomer = await Customer.findByIdAndUpdate(
-        existingCustomer._id,
-        { $set: customerData },
-        { new: true, runValidators: true }
+      const updatedCustomer = await this.repository.updateOne(
+        { _id: existingCustomer._id },
+        { $set: customerData }
       );
+
       if (!updatedCustomer) {
-        throw new Error('Failed to update customer');
+        throw new Error("Failed to update customer");
       }
+
       return updatedCustomer;
     }
-    const customer = new Customer(customerData);
-    return await customer.save();
-  }
 
-  public async getAllCustomers(query: any = {}): Promise<ICustomer[]> {
-    return await Customer.find(query).sort({ createdAt: -1 });
+    return this.repository.create(customerData);
   }
 
   public async getCustomerByEmail(email: string): Promise<ICustomer | null> {
-    return await Customer.findOne({ email });
+    return this.repository.findOne({ email });
   }
 
-  public async updateCustomer(id: string, customerData: Partial<ICustomer>): Promise<ICustomer | null> {
-    return await Customer.findByIdAndUpdate(
-      id,
-      { $set: customerData },
-      { new: true, runValidators: true }
-    );
+  public async softDeleteCustomer(id: string): Promise<ICustomer | null> {
+    return this.repository.updateOne({ _id: id }, { status: CustomerStatus.INACTIVE });
   }
-
-  public async deleteCustomer(id: string): Promise<ICustomer | null> {
-    return await Customer.findByIdAndUpdate(
-      id,
-      { status: CustomerStatus.INACTIVE },
-      { new: true }
-    );
-  }
-
 }

@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { CustomerService } from '@/services/customers.service';
 import { HttpResponse } from '@/interfaces/http.response';
+import { CustomersService } from '@/services/customers.service';
 
 export class CustomerController {
-  private customerService: CustomerService;
+  private customerService: CustomersService;
 
   constructor() {
-    this.customerService = new CustomerService();
+    this.customerService = new CustomersService();
   }
 
   public createCustomer = async (req: Request, res: Response): Promise<void> => {
@@ -25,7 +25,7 @@ export class CustomerController {
 
   public getAllCustomers = async (req: Request, res: Response): Promise<void> => {
     try {
-      const customers = await this.customerService.getAllCustomers(req.query);
+      const customers = await this.customerService.getAll(req.query);
       const response = new HttpResponse('Customers retrieved successfully', customers);
       res.status(response.statusCode).json(response);
     } catch (error: any) {
@@ -40,7 +40,7 @@ export class CustomerController {
 
   public updateCustomer = async (req: Request, res: Response): Promise<void> => {
     try {
-      const customer = await this.customerService.updateCustomer(req.params.id, req.body);
+      const customer = await this.customerService.update(req.params.id, req.body);
       if (!customer) {
         const response = new HttpResponse('Customer not found', null);
         res.status(response.statusCode).json(response);
@@ -59,7 +59,7 @@ export class CustomerController {
 
   public deleteCustomer = async (req: Request, res: Response): Promise<void> => {
     try {
-      const customer = await this.customerService.deleteCustomer(req.params.id);
+      const customer = await this.customerService.softDeleteCustomer(req.params.id);
       if (!customer) {
         const response = new HttpResponse('Customer not found', null);
         res.status(response.statusCode).json(response);
