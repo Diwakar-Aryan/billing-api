@@ -10,6 +10,12 @@ export default class configClass {
     return this._instance;
   }
 
+  get getEnv() {
+    return {
+      NODE_ENV : process.env.NODE_ENV ?? 'development'
+    }
+  }
+
   get ServerInfo() {
     return {PORT: process.env.PORT || 3000};
   }
