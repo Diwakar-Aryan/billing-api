@@ -1,4 +1,3 @@
-// src/base/base.service.ts
 import { BaseRepository } from '@/repositories/base/base.repository';
 import { FilterQuery } from 'mongoose';
 

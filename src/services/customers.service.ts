@@ -2,6 +2,7 @@ import { CustomersRepository } from "@/repositories/customers.repository";
 import { ICustomer } from "@/types/interfaces";
 import { CustomerStatus } from "@/types/enums";
 import { BaseService } from "./base/base.servce";
+import { CustomerDto } from "@/dtos/customer.dto";
 
 const customersRepository = new CustomersRepository();
 
@@ -10,7 +11,7 @@ export class CustomersService extends BaseService<ICustomer> {
     super(customersRepository);
   }
 
-  public async createCustomer(customerData: Partial<ICustomer>): Promise<ICustomer> {
+  public async createCustomer(customerData: CustomerDto): Promise<ICustomer> {
     const existingCustomer = await this.repository.findOne({
       $or: [
         { email: customerData.email },
