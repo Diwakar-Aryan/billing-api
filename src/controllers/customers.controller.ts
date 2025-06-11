@@ -1,20 +1,29 @@
 import { Request, Response } from 'express';
 import { HttpResponse } from '@/interfaces/http.response';
 import { CustomersService } from '@/services/customers.service';
+import logger from '@/logger';
+import { CustomerDto } from '@/dtos/customer.dto';
 
 export class CustomerController {
   private customerService: CustomersService;
-
   constructor() {
     this.customerService = new CustomersService();
   }
 
   public createCustomer = async (req: Request, res: Response): Promise<void> => {
     try {
-      const customer = await this.customerService.createCustomer(req.body);
+      const customerData:CustomerDto = req.body;
+      if (!customerData) {
+        const response = new HttpResponse('Invalid customer data', null);
+        res.status(response.statusCode).json(response);
+        return;
+      }
+      const customer = await this.customerService.createCustomer(customerData);
+      logger.info('Customer created successfully');
       const response = new HttpResponse('Customer created successfully', customer);
       res.status(response.statusCode).json(response);
     } catch (error: any) {
+      logger.error('Error creating customer', { error: error.message });
       const response = new HttpResponse(
         error.message,
         null

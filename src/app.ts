@@ -3,7 +3,6 @@ import bodyParser from 'body-parser';
 import {Routes} from './interfaces/routes.interface';
 import configClass from './configs';
 import logger from './logger';
-// import { errorMiddleware } from "./middlewares/error.middleware";
 class App {
   private readonly app: express.Application;
   private readonly config = configClass.initialize();
